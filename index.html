@@ -1,0 +1,943 @@
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⚠ ENCRYPTION NOTICE — CYBERSECURITY TRAINING SIMULATION</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Roboto+Condensed:wght@400;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0a0a0a;
+    color: #ff0000;
+    font-family: 'Share Tech Mono', monospace;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  /* Scanline overlay */
+  .scanlines::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      rgba(0,0,0,0.15) 0px,
+      rgba(0,0,0,0.15) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* Glitch effect */
+  @keyframes glitch {
+    0%, 100% { transform: translate(0); }
+    20% { transform: translate(-3px, 2px); }
+    40% { transform: translate(3px, -2px); }
+    60% { transform: translate(-2px, -1px); }
+    80% { transform: translate(2px, 1px); }
+  }
+
+  @keyframes glitchText {
+    0%, 100% { text-shadow: 2px 0 red, -2px 0 cyan; }
+    25% { text-shadow: -2px 0 red, 2px 0 cyan; }
+    50% { text-shadow: 2px 2px red, -2px -2px cyan; }
+    75% { text-shadow: -2px 2px red, 2px -2px cyan; }
+  }
+
+  @keyframes flicker {
+    0%, 100% { opacity: 1; }
+    10% { opacity: 0.8; }
+    20% { opacity: 1; }
+    30% { opacity: 0.6; }
+    40% { opacity: 1; }
+    50% { opacity: 0.9; }
+    60% { opacity: 1; }
+    70% { opacity: 0.7; }
+    80% { opacity: 1; }
+    90% { opacity: 0.85; }
+  }
+
+  @keyframes pulse-red {
+    0%, 100% { box-shadow: 0 0 20px rgba(255,0,0,0.3), inset 0 0 20px rgba(255,0,0,0.1); }
+    50% { box-shadow: 0 0 60px rgba(255,0,0,0.6), inset 0 0 40px rgba(255,0,0,0.2); }
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  @keyframes warningPulse {
+    0%, 100% { background-color: rgba(255,0,0,0.1); border-color: #ff0000; }
+    50% { background-color: rgba(255,0,0,0.25); border-color: #ff4444; }
+  }
+
+  @keyframes progressGlow {
+    0%, 100% { box-shadow: 0 0 5px #ff0000; }
+    50% { box-shadow: 0 0 20px #ff0000, 0 0 40px rgba(255,0,0,0.5); }
+  }
+
+  @keyframes slideDown {
+    from { transform: translateY(-100%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+  @keyframes fadeInUp {
+    from { transform: translateY(30px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+  @keyframes rotateSkull {
+    0%, 100% { transform: rotate(-2deg) scale(1); }
+    50% { transform: rotate(2deg) scale(1.05); }
+  }
+
+  @keyframes borderAnim {
+    0% { border-image-source: linear-gradient(0deg, #ff0000, #000); }
+    25% { border-image-source: linear-gradient(90deg, #ff0000, #000); }
+    50% { border-image-source: linear-gradient(180deg, #ff0000, #000); }
+    75% { border-image-source: linear-gradient(270deg, #ff0000, #000); }
+    100% { border-image-source: linear-gradient(360deg, #ff0000, #000); }
+  }
+
+  @keyframes typing {
+    from { width: 0; }
+    to { width: 100%; }
+  }
+
+  .glitch-text {
+    animation: glitchText 0.3s infinite;
+  }
+
+  .flicker {
+    animation: flicker 3s infinite;
+  }
+
+  .pulse-border {
+    animation: pulse-red 2s infinite;
+  }
+
+  .blink-cursor {
+    animation: blink 1s step-end infinite;
+  }
+
+  .warning-pulse {
+    animation: warningPulse 1.5s infinite;
+  }
+
+  .skull-anim {
+    animation: rotateSkull 2s ease-in-out infinite;
+  }
+
+  .progress-bar {
+    animation: progressGlow 1.5s infinite;
+    background: linear-gradient(90deg, #ff0000, #cc0000, #ff0000);
+    background-size: 200% 100%;
+    animation: progressGlow 1.5s infinite, progressMove 2s linear infinite;
+  }
+
+  @keyframes progressMove {
+    0% { background-position: 0% 0%; }
+    100% { background-position: 200% 0%; }
+  }
+
+  .log-entry {
+    animation: fadeInUp 0.3s ease-out;
+  }
+
+  .terminal-body {
+    scrollbar-width: thin;
+    scrollbar-color: #ff0000 #1a1a1a;
+  }
+  .terminal-body::-webkit-scrollbar { width: 6px; }
+  .terminal-body::-webkit-scrollbar-track { background: #1a1a1a; }
+  .terminal-body::-webkit-scrollbar-thumb { background: #ff0000; border-radius: 3px; }
+
+  .bg-grid {
+    background-image:
+      linear-gradient(rgba(255,0,0,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,0,0,0.03) 1px, transparent 1px);
+    background-size: 30px 30px;
+  }
+
+  .countdown-digit {
+    background: linear-gradient(180deg, #1a0000, #0a0000);
+    border: 2px solid #ff0000;
+    text-shadow: 0 0 20px #ff0000, 0 0 40px rgba(255,0,0,0.5);
+  }
+
+  .warning-banner {
+    background: linear-gradient(90deg, #ff0000, #cc0000, #ff0000);
+    animation: warningBannerMove 3s linear infinite;
+    background-size: 200% 100%;
+  }
+
+  @keyframes warningBannerMove {
+    0% { background-position: 0% 0%; }
+    100% { background-position: 200% 0%; }
+  }
+
+  .encrypted-file {
+    transition: all 0.3s ease;
+  }
+  .encrypted-file:hover {
+    background: rgba(255,0,0,0.1);
+    padding-left: 12px;
+  }
+
+  .btn-danger {
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-danger::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%; right: 0; bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    transition: left 0.5s;
+  }
+  .btn-danger:hover::before {
+    left: 100%;
+  }
+  .btn-danger:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(255,0,0,0.4);
+  }
+
+  .simulation-banner {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 10000;
+  }
+
+  .top-warning {
+    animation: slideDown 0.5s ease-out;
+  }
+
+  .matrix-rain {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.05;
+  }
+
+  .lock-icon {
+    filter: drop-shadow(0 0 20px rgba(255,0,0,0.8));
+  }
+
+  #sound-indicator {
+    transition: all 0.3s ease;
+  }
+</style>
+</head>
+<body class="scanlines bg-grid">
+
+<!-- Matrix Rain Canvas -->
+<canvas id="matrixRain" class="matrix-rain"></canvas>
+
+<!-- TOP SAFETY BANNER -->
+<div class="top-warning fixed top-0 left-0 right-0 z-[10001] bg-yellow-900/95 border-b-2 border-yellow-500 py-2 px-4 text-center" id="safetyBanner">
+  <p class="text-yellow-300 text-sm font-bold tracking-widest uppercase">
+    ⚠ CYBERSECURITY TRAINING SIMULATION — NO REAL FILES ARE AFFECTED — THIS IS A DEMONSTRATION TOOL ⚠
+  </p>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="relative z-10 min-h-screen pt-14 pb-20 px-4">
+
+  <!-- SIMULATION ACTIVE BADGE -->
+  <div class="fixed top-16 right-4 z-[9998] flex items-center gap-3 bg-black/90 border border-red-600 rounded-lg px-4 py-2 pulse-border" id="simBadge">
+    <div class="w-3 h-3 bg-red-500 rounded-full" style="animation: blink 1s infinite;"></div>
+    <span class="text-red-400 text-xs font-bold tracking-wider uppercase">Simulation Active</span>
+    <button onclick="toggleSound()" id="soundIndicator" class="ml-2 text-red-400 hover:text-red-200 transition text-lg" title="Toggle Sound">
+      🔊
+    </button>
+  </div>
+
+  <!-- RANSOMWARE HEADER -->
+  <div class="max-w-6xl mx-auto mt-8">
+
+    <!-- SKULL & HEADER -->
+    <div class="text-center mb-8">
+      <div class="text-6xl md:text-7xl mb-4 skull-anim inline-block lock-icon">🔒</div>
+      <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold text-red-500 glitch-text tracking-wider uppercase leading-tight" style="font-family: 'Roboto Condensed', sans-serif;">
+        YOUR FILES HAVE BEEN<br>
+        <span class="text-red-400" style="text-shadow: 0 0 30px #ff0000;">ENCRYPTED</span>
+      </h1>
+      <div class="mt-4 text-gray-400 text-sm tracking-widest uppercase">
+        — ID: <span class="text-red-400" id="uniqueId">LZ-8A7F-3K2D-91BX</span> —
+      </div>
+      <div class="mt-3 text-red-300 text-base md:text-lg italic">
+        "This ransomware was built by <span class="text-red-400 font-bold">Luzzi</span>."
+      </div>
+    </div>
+
+    <!-- WARNING MESSAGE BOX -->
+    <div class="max-w-4xl mx-auto mb-8 border-2 border-red-600 bg-black/80 rounded-lg p-6 warning-pulse">
+      <div class="flex items-start gap-4">
+        <span class="text-4xl flicker">⚠</span>
+        <div>
+          <h2 class="text-red-400 font-bold text-lg uppercase tracking-wider mb-2">Ransomware Attack Notification</h2>
+          <p class="text-red-300 text-sm md:text-base leading-relaxed">
+            Your device is currently available for use, but this is a cybersecurity attack. The system will display a
+            <span class="text-red-400 font-bold">black screen after 24 hours</span> if the ransom condition is not met.
+            All your personal files, documents, photos, and databases have been encrypted with military-grade
+            <span class="text-red-400">AES-256 + RSA-4096</span> encryption.
+          </p>
+          <p class="text-gray-500 text-xs mt-2 italic">⚠ THIS IS A SIMULATION — NO ACTUAL ENCRYPTION HAS OCCURRED</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- COUNTDOWN TIMER -->
+    <div class="max-w-4xl mx-auto mb-8">
+      <div class="text-center mb-4">
+        <span class="text-red-500 text-xs tracking-[0.3em] uppercase font-bold bg-red-900/30 px-4 py-1 rounded-full border border-red-800">
+          ⏱ Simulation Countdown
+        </span>
+      </div>
+      <div class="flex justify-center items-center gap-3 md:gap-5">
+        <div class="text-center">
+          <div class="countdown-digit rounded-lg w-16 h-20 md:w-24 md:h-28 flex items-center justify-center text-3xl md:text-5xl font-bold text-red-400" id="hours">24</div>
+          <span class="text-red-600 text-[10px] md:text-xs mt-1 block tracking-wider">HOURS</span>
+        </div>
+        <span class="text-red-500 text-3xl md:text-5xl font-bold blink-cursor">:</span>
+        <div class="text-center">
+          <div class="countdown-digit rounded-lg w-16 h-20 md:w-24 md:h-28 flex items-center justify-center text-3xl md:text-5xl font-bold text-red-400" id="minutes">00</div>
+          <span class="text-red-600 text-[10px] md:text-xs mt-1 block tracking-wider">MINS</span>
+        </div>
+        <span class="text-red-500 text-3xl md:text-5xl font-bold blink-cursor">:</span>
+        <div class="text-center">
+          <div class="countdown-digit rounded-lg w-16 h-20 md:w-24 md:h-28 flex items-center justify-center text-3xl md:text-5xl font-bold text-red-400" id="seconds">00</div>
+          <span class="text-red-600 text-[10px] md:text-xs mt-1 block tracking-wider">SECS</span>
+        </div>
+      </div>
+      <div class="text-center mt-4">
+        <div class="inline-flex items-center gap-2 bg-red-950/50 border border-red-900 rounded px-4 py-2">
+          <span class="text-red-500 text-sm">Time remaining until permanent data loss:</span>
+          <span class="text-red-400 font-bold text-sm" id="totalTime">86,400 seconds</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- TWO COLUMN LAYOUT -->
+    <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+
+      <!-- LEFT COLUMN: RANSOM & ENCRYPTION INFO -->
+      <div class="space-y-6">
+
+        <!-- RANSOM AMOUNT -->
+        <div class="bg-black/80 border-2 border-red-700 rounded-lg p-6 pulse-border">
+          <h3 class="text-red-400 text-sm tracking-[0.2em] uppercase font-bold mb-4 flex items-center gap-2">
+            <span class="text-xl">💰</span> Ransom Demand
+          </h3>
+          <div class="text-center py-4">
+            <div class="text-5xl md:text-6xl font-bold text-red-400 flicker" style="text-shadow: 0 0 30px rgba(255,0,0,0.5);">
+              80.5 <span class="text-3xl">BTC</span>
+            </div>
+            <div class="text-gray-500 text-sm mt-2">
+              ≈ $<span id="btcPrice">3,421,375.00</span> USD
+            </div>
+            <div class="mt-4 bg-red-950/50 border border-red-800 rounded p-3">
+              <p class="text-red-300 text-xs">Send payment to Bitcoin wallet:</p>
+              <p class="text-red-400 text-xs font-mono mt-1 break-all">
+                bc1q<span class="text-gray-500">••••••••••</span>luzzi<span class="text-gray-500">••••••••••</span>8a7f
+              </p>
+            </div>
+            <p class="text-gray-600 text-[10px] mt-2 italic">[FICTIONAL WALLET ADDRESS — SIMULATION ONLY]</p>
+          </div>
+        </div>
+
+        <!-- ENCRYPTION PROGRESS -->
+        <div class="bg-black/80 border-2 border-red-700 rounded-lg p-6">
+          <h3 class="text-red-400 text-sm tracking-[0.2em] uppercase font-bold mb-4 flex items-center gap-2">
+            <span class="text-xl">🔐</span> Encryption Progress
+          </h3>
+          <div class="space-y-3">
+            <div>
+              <div class="flex justify-between text-xs text-red-400 mb-1">
+                <span>Documents</span>
+                <span id="docProgress">100%</span>
+              </div>
+              <div class="h-2 bg-gray-900 rounded-full overflow-hidden">
+                <div class="progress-bar h-full rounded-full transition-all duration-1000" style="width: 100%"></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex justify-between text-xs text-red-400 mb-1">
+                <span>Images & Media</span>
+                <span id="imgProgress">100%</span>
+              </div>
+              <div class="h-2 bg-gray-900 rounded-full overflow-hidden">
+                <div class="progress-bar h-full rounded-full transition-all duration-1000" style="width: 100%"></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex justify-between text-xs text-red-400 mb-1">
+                <span>Databases</span>
+                <span id="dbProgress">100%</span>
+              </div>
+              <div class="h-2 bg-gray-900 rounded-full overflow-hidden">
+                <div class="progress-bar h-full rounded-full transition-all duration-1000" style="width: 100%"></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex justify-between text-xs text-red-400 mb-1">
+                <span>System Files</span>
+                <span id="sysProgress">100%</span>
+              </div>
+              <div class="h-2 bg-gray-900 rounded-full overflow-hidden">
+                <div class="progress-bar h-full rounded-full transition-all duration-1000" style="width: 100%"></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex justify-between text-xs text-red-400 mb-1">
+                <span>Archives & Backups</span>
+                <span id="arcProgress">100%</span>
+              </div>
+              <div class="h-2 bg-gray-900 rounded-full overflow-hidden">
+                <div class="progress-bar h-full rounded-full transition-all duration-1000" style="width: 100%"></div>
+              </div>
+            </div>
+          </div>
+          <div class="mt-4 text-center">
+            <span class="text-red-500 text-2xl font-bold">47,832</span>
+            <span class="text-red-400 text-sm"> files encrypted</span>
+          </div>
+        </div>
+
+        <!-- ENCRYPTION DETAILS -->
+        <div class="bg-black/80 border border-red-900 rounded-lg p-4">
+          <h3 class="text-red-400 text-xs tracking-[0.2em] uppercase font-bold mb-3">Encryption Specifications</h3>
+          <div class="grid grid-cols-2 gap-2 text-xs">
+            <div class="text-gray-500">Algorithm:</div>
+            <div class="text-red-400">AES-256-CTR + RSA-4096</div>
+            <div class="text-gray-500">Key Derivation:</div>
+            <div class="text-red-400">PBKDF2-SHA512</div>
+            <div class="text-gray-500">IV Generation:</div>
+            <div class="text-red-400">CSPRNG</div>
+            <div class="text-gray-500">Key Exchange:</div>
+            <div class="text-red-400">ECDH P-384</div>
+            <div class="text-gray-500">Total Size:</div>
+            <div class="text-red-400">847.3 GB</div>
+            <div class="text-gray-500">Status:</div>
+            <div class="text-red-400 font-bold">COMPLETE ✓</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN: FILES & TERMINAL -->
+      <div class="space-y-6">
+
+        <!-- ENCRYPTED FILES LIST -->
+        <div class="bg-black/80 border-2 border-red-700 rounded-lg p-6 max-h-80 overflow-y-auto terminal-body">
+          <h3 class="text-red-400 text-sm tracking-[0.2em] uppercase font-bold mb-4 flex items-center gap-2">
+            <span class="text-xl">📁</span> Encrypted Files
+            <span class="text-xs text-red-600 ml-auto">Showing 47,832 of 47,832</span>
+          </h3>
+          <div id="fileList" class="space-y-1 text-xs">
+            <!-- Files will be populated by JS -->
+          </div>
+        </div>
+
+        <!-- TERMINAL / LOG PANEL -->
+        <div class="bg-black border-2 border-red-800 rounded-lg overflow-hidden">
+          <div class="bg-red-950/80 px-4 py-2 flex items-center gap-2 border-b border-red-800">
+            <div class="flex gap-1.5">
+              <div class="w-3 h-3 rounded-full bg-red-500"></div>
+              <div class="w-3 h-3 rounded-full bg-red-800"></div>
+              <div class="w-3 h-3 rounded-full bg-red-900"></div>
+            </div>
+            <span class="text-red-400 text-xs tracking-wider ml-2">lz-crypt@ransom:~$</span>
+          </div>
+          <div class="terminal-body h-64 overflow-y-auto p-4 font-mono text-xs" id="terminal">
+            <!-- Terminal logs populated by JS -->
+          </div>
+          <div class="border-t border-red-900 px-4 py-2 flex items-center gap-2 bg-black/50">
+            <span class="text-red-500 text-xs">$</span>
+            <span class="text-red-400 text-xs blink-cursor">_</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VICTIM INFO BOX -->
+    <div class="max-w-4xl mx-auto mb-8 bg-black/80 border border-red-800 rounded-lg p-6">
+      <h3 class="text-red-400 text-sm tracking-[0.2em] uppercase font-bold mb-4 flex items-center gap-2">
+        <span class="text-xl">🖥</span> System Information
+      </h3>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+        <div class="space-y-2">
+          <div class="text-gray-500">Hostname:</div>
+          <div class="text-red-400 font-mono" id="hostname">DESKTOP-LZ7X9K2</div>
+          <div class="text-gray-500">OS:</div>
+          <div class="text-red-400 font-mono" id="osInfo">Windows 11 Pro 23H2</div>
+          <div class="text-gray-500">Architecture:</div>
+          <div class="text-red-400 font-mono">x86_64</div>
+        </div>
+        <div class="space-y-2">
+          <div class="text-gray-500">Internal IP:</div>
+          <div class="text-red-400 font-mono">192.168.1.147</div>
+          <div class="text-gray-500">External IP:</div>
+          <div class="text-red-400 font-mono" id="extIp">XX.XXX.XXX.XX</div>
+          <div class="text-gray-500">MAC Address:</div>
+          <div class="text-red-400 font-mono">A4:XX:XX:XX:XX:XX</div>
+        </div>
+        <div class="space-y-2">
+          <div class="text-gray-500">Infection Time:</div>
+          <div class="text-red-400 font-mono" id="infectionTime">--:--:--</div>
+          <div class="text-gray-500">Encryption Key ID:</div>
+          <div class="text-red-400 font-mono">LZ-8A7F-3K2D</div>
+          <div class="text-gray-500">Mutex:</div>
+          <div class="text-red-400 font-mono">Global\LZ_MUTEX_91</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACTION BUTTONS -->
+    <div class="max-w-4xl mx-auto mb-8 flex flex-col sm:flex-row gap-4 justify-center items-center">
+      <button onclick="restoreDemoFiles()" class="btn-danger bg-gradient-to-r from-red-700 to-red-900 hover:from-red-600 hover:to-red-800 text-white font-bold py-4 px-10 rounded-lg border-2 border-red-500 text-sm tracking-wider uppercase transition-all w-full sm:w-auto">
+        🔓 Restore Demo Files (Simulation)
+      </button>
+      <button onclick="endSimulation()" class="btn-danger bg-gradient-to-r from-gray-800 to-gray-900 hover:from-gray-700 hover:to-gray-800 text-red-400 font-bold py-4 px-10 rounded-lg border-2 border-red-800 text-sm tracking-wider uppercase transition-all w-full sm:w-auto">
+        ✖ End Simulation
+      </button>
+    </div>
+
+    <!-- INSTRUCTIONS PANEL -->
+    <div class="max-w-4xl mx-auto mb-8 bg-gray-950/80 border border-gray-800 rounded-lg p-6">
+      <h3 class="text-gray-400 text-sm tracking-[0.2em] uppercase font-bold mb-3">Simulation Instructions</h3>
+      <ul class="text-gray-500 text-xs space-y-1.5">
+        <li>• This is a <span class="text-gray-400">cybersecurity training demonstration</span> designed for educational purposes</li>
+        <li>• <span class="text-gray-400">No real files</span> on your device have been encrypted, modified, or affected in any way</li>
+        <li>• The countdown timer is purely visual — nothing happens when it reaches zero</li>
+        <li>• Click "Restore Demo Files" to simulate the decryption process</li>
+        <li>• Click "End Simulation" to dismiss the simulation screen</li>
+        <li>• Toggle sound using the speaker icon 🔊 in the top-right badge</li>
+        <li>• This page cannot access your filesystem, run executables, or modify your system</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM SIMULATION BANNER -->
+<div class="simulation-banner bg-red-900/95 border-t-2 border-red-500 py-2 px-4 text-center">
+  <p class="text-red-200 text-xs font-bold tracking-widest uppercase">
+    ⚠ CYBERSECURITY TRAINING — NO REAL FILES ARE AFFECTED — EDUCATIONAL SIMULATION ONLY ⚠
+  </p>
+</div>
+
+<!-- END SIMULATION OVERLAY (hidden) -->
+<div id="endOverlay" class="fixed inset-0 bg-black z-[10002] flex items-center justify-center hidden">
+  <div class="text-center p-8">
+    <div class="text-6xl mb-6">✅</div>
+    <h2 class="text-green-400 text-3xl font-bold mb-4" style="font-family: 'Roboto Condensed', sans-serif;">SIMULATION ENDED</h2>
+    <p class="text-gray-400 text-sm mb-6 max-w-md mx-auto">
+      The ransomware simulation has been terminated. No files were harmed during this demonstration.
+      Thank you for participating in this cybersecurity training exercise.
+    </p>
+    <div class="bg-gray-900 border border-gray-700 rounded-lg p-4 max-w-sm mx-auto mb-6">
+      <p class="text-gray-500 text-xs">Simulation Duration:</p>
+      <p class="text-green-400 text-lg font-bold" id="simDuration">00:00:00</p>
+    </div>
+    <button onclick="location.reload()" class="bg-green-800 hover:bg-green-700 text-green-200 font-bold py-3 px-8 rounded-lg border border-green-600 text-sm tracking-wider uppercase transition-all">
+      Restart Simulation
+    </button>
+  </div>
+</div>
+
+<!-- RESTORE OVERLAY -->
+<div id="restoreOverlay" class="fixed inset-0 bg-black/95 z-[10002] flex items-center justify-center hidden">
+  <div class="text-center p-8 max-w-lg w-full mx-4">
+    <div class="text-5xl mb-4">🔓</div>
+    <h2 class="text-green-400 text-2xl font-bold mb-4">DECRYPTING FILES...</h2>
+    <div class="mb-4">
+      <div class="h-3 bg-gray-900 rounded-full overflow-hidden border border-gray-700">
+        <div id="restoreProgress" class="h-full bg-gradient-to-r from-green-600 to-green-400 rounded-full transition-all duration-300" style="width: 0%"></div>
+      </div>
+    </div>
+    <p class="text-gray-400 text-sm" id="restoreStatus">Initializing decryption sequence...</p>
+    <p class="text-gray-600 text-xs mt-4 italic">This is a simulated restoration — no actual decryption is occurring</p>
+  </div>
+</div>
+
+<script>
+// ===== CONFIGURATION =====
+let simulationStartTime = Date.now();
+let soundEnabled = true;
+let audioContext = null;
+let warningOscillator = null;
+let countdownSeconds = 24 * 60 * 60; // 24 hours
+let countdownInterval;
+let simulationEnded = false;
+
+// ===== AUDIO SYSTEM =====
+function initAudio() {
+  try {
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    playEmergencyWarning();
+  } catch(e) {
+    console.log('Audio not supported');
+  }
+}
+
+function playEmergencyWarning() {
+  if (!audioContext || !soundEnabled) return;
+
+  try {
+    // Create a dramatic warning sound
+    const now = audioContext.currentTime;
+
+    // Oscillator 1 - Low rumble
+    const osc1 = audioContext.createOscillator();
+    const gain1 = audioContext.createGain();
+    osc1.type = 'sawtooth';
+    osc1.frequency.setValueAtTime(80, now);
+    osc1.frequency.linearRampToValueAtTime(60, now + 2);
+    gain1.gain.setValueAtTime(0, now);
+    gain1.gain.linearRampToValueAtTime(0.15, now + 0.5);
+    gain1.gain.linearRampToValueAtTime(0.08, now + 2);
+    gain1.gain.linearRampToValueAtTime(0, now + 3);
+    osc1.connect(gain1);
+    gain1.connect(audioContext.destination);
+    osc1.start(now);
+    osc1.stop(now + 3);
+
+    // Oscillator 2 - High alarm tone
+    const osc2 = audioContext.createOscillator();
+    const gain2 = audioContext.createGain();
+    osc2.type = 'square';
+    osc2.frequency.setValueAtTime(880, now);
+    gain2.gain.setValueAtTime(0, now);
+    gain2.gain.linearRampToValueAtTime(0.06, now + 0.1);
+    gain2.gain.setValueAtTime(0, now + 0.3);
+    gain2.gain.linearRampToValueAtTime(0.06, now + 0.4);
+    gain2.gain.setValueAtTime(0, now + 0.6);
+    gain2.gain.linearRampToValueAtTime(0.06, now + 0.7);
+    gain2.gain.setValueAtTime(0, now + 0.9);
+    osc2.connect(gain2);
+    gain2.connect(audioContext.destination);
+    osc2.start(now);
+    osc2.stop(now + 1);
+
+    // Oscillator 3 - Pulse beat
+    const osc3 = audioContext.createOscillator();
+    const gain3 = audioContext.createGain();
+    osc3.type = 'sine';
+    osc3.frequency.setValueAtTime(440, now);
+    osc3.frequency.linearRampToValueAtTime(220, now + 1.5);
+    gain3.gain.setValueAtTime(0, now);
+    gain3.gain.linearRampToValueAtTime(0.08, now + 0.2);
+    gain3.gain.linearRampToValueAtTime(0.04, now + 1);
+    gain3.gain.linearRampToValueAtTime(0, now + 1.5);
+    osc3.connect(gain3);
+    gain3.connect(audioContext.destination);
+    osc3.start(now);
+    osc3.stop(now + 1.5);
+  } catch(e) {}
+}
+
+function toggleSound() {
+  soundEnabled = !soundEnabled;
+  const indicator = document.getElementById('soundIndicator');
+  indicator.textContent = soundEnabled ? '🔊' : '🔇';
+  if (soundEnabled) {
+    if (!audioContext) initAudio();
+    else playEmergencyWarning();
+  }
+}
+
+// ===== COUNTDOWN TIMER =====
+function startCountdown() {
+  countdownInterval = setInterval(() => {
+    if (simulationEnded) return;
+    countdownSeconds--;
+    if (countdownSeconds <= 0) countdownSeconds = 0;
+
+    const h = Math.floor(countdownSeconds / 3600);
+    const m = Math.floor((countdownSeconds % 3600) / 60);
+    const s = countdownSeconds % 60;
+
+    document.getElementById('hours').textContent = String(h).padStart(2, '0');
+    document.getElementById('minutes').textContent = String(m).padStart(2, '0');
+    document.getElementById('seconds').textContent = String(s).padStart(2, '0');
+    document.getElementById('totalTime').textContent = countdownSeconds.toLocaleString() + ' seconds';
+  }, 1000);
+}
+
+// ===== FAKE ENCRYPTED FILES =====
+const fakeFiles = [
+  { path: 'C:\\Users\\Documents', name: 'financial_report_Q4.xlsx.lzenc', size: '4.2 MB' },
+  { path: 'C:\\Users\\Documents', name: 'tax_returns_2024.pdf.lzenc', size: '12.8 MB' },
+  { path: 'C:\\Users\\Documents', name: 'passwords_backup.csv.lzenc', size: '256 KB' },
+  { path: 'C:\\Users\\Documents', name: 'business_plan_v3.docx.lzenc', size: '8.1 MB' },
+  { path: 'C:\\Users\\Desktop', name: 'family_photos_2024.zip.lzenc', size: '2.4 GB' },
+  { path: 'C:\\Users\\Desktop', name: 'wedding_video.mp4.lzenc', size: '4.7 GB' },
+  { path: 'C:\\Users\\Desktop', name: 'project_source.zip.lzenc', size: '847 MB' },
+  { path: 'C:\\Users\\Pictures', name: 'IMG_4521.jpg.lzenc', size: '8.3 MB' },
+  { path: 'C:\\Users\\Pictures', name: 'vacation_hawaii.jpg.lzenc', size: '12.1 MB' },
+  { path: 'C:\\Users\\Pictures', name: 'screenshot_2024.png.lzenc', size: '3.2 MB' },
+  { path: 'D:\\Backup', name: 'database_prod.sql.lzenc', size: '890 MB' },
+  { path: 'D:\\Backup', name: 'website_backup.tar.gz.lzenc', size: '3.4 GB' },
+  { path: 'D:\\Backup', name: 'email_archive.pst.lzenc', size: '1.8 GB' },
+  { path: 'C:\\Users\\Music', name: 'recording_session.wav.lzenc', size: '456 MB' },
+  { path: 'C:\\Users\\Videos', name: 'presentation_recording.mp4.lzenc', size: '1.2 GB' },
+  { path: 'C:\\Users\\Downloads', name: 'tax_software_installer.exe.lzenc', size: '234 MB' },
+  { path: 'C:\\Users\\Documents', name: 'client_contracts.pdf.lzenc', size: '67 MB' },
+  { path: 'C:\\Users\\Documents', name: 'medical_records.pdf.lzenc', size: '45 MB' },
+  { path: 'C:\\Users\\Documents', name: 'insurance_policy.pdf.lzenc', size: '23 MB' },
+  { path: 'E:\\External', name: 'backup_drive_full.img.lzenc', size: '47.3 GB' },
+  { path: 'C:\\Users\\Documents', name: 'resume_final.docx.lzenc', size: '890 KB' },
+  { path: 'C:\\Users\\Documents', name: 'thesis_draft_v7.docx.lzenc', size: '34 MB' },
+  { path: 'C:\\ProgramData', name: 'app_config.json.lzenc', size: '12 KB' },
+  { path: 'C:\\Users\\AppData', name: 'browser_cookies.sqlite.lzenc', size: '8 MB' },
+  { path: 'C:\\Users\\Documents', name: 'crypto_wallet_keys.txt.lzenc', size: '2 KB' },
+];
+
+function populateFiles() {
+  const fileList = document.getElementById('fileList');
+  fakeFiles.forEach((file, i) => {
+    setTimeout(() => {
+      const entry = document.createElement('div');
+      entry.className = 'encrypted-file flex items-center justify-between py-1 px-2 rounded text-red-400/70 hover:text-red-300 border-b border-gray-900';
+      entry.innerHTML = `
+        <div class="flex items-center gap-2 truncate">
+          <span class="text-red-600">🔒</span>
+          <span class="truncate">${file.path}\\<span class="text-red-400">${file.name}</span></span>
+        </div>
+        <span class="text-gray-600 ml-2 whitespace-nowrap">${file.size}</span>
+      `;
+      fileList.appendChild(entry);
+    }, i * 100);
+  });
+}
+
+// ===== TERMINAL LOGS =====
+const terminalLogs = [
+  { text: '[INIT] LuzziCrypt Ransomware v4.2.1 loaded', type: 'system' },
+  { text: '[INIT] Checking privileges... Administrator: TRUE', type: 'system' },
+  { text: '[INIT] Disabling Windows Defender Real-Time Protection...', type: 'warn' },
+  { text: '[INIT] Stopping Volume Shadow Copy Service (VSS)...', type: 'warn' },
+  { text: '[INIT] Deleting shadow copies: vssadmin delete shadows /all /quiet', type: 'warn' },
+  { text: '[INIT] Disabling System Restore...', type: 'warn' },
+  { text: '[INIT] Clearing Windows Event Logs...', type: 'warn' },
+  { text: '[NET] Establishing encrypted C2 channel to lz-c2.onion:443...', type: 'system' },
+  { text: '[NET] C2 connection established. Session: LZ-8A7F-3K2D', type: 'success' },
+  { text: '[KEY] Generating AES-256 encryption key...', type: 'system' },
+  { text: '[KEY] Generating RSA-4096 key pair...', type: 'system' },
+  { text: '[KEY] Key derivation complete. Key ID: LZ-8A7F-3K2D-91BX', type: 'success' },
+  { text: '[KEY] Uploading private key to C2 server...', type: 'warn' },
+  { text: '[SCAN] Enumerating file system drives: C:\\ D:\\ E:\\', type: 'system' },
+  { text: '[SCAN] Found 47,832 target files across 3 drives', type: 'system' },
+  { text: '[SCAN] Target extensions: .doc .docx .xls .xlsx .pdf .jpg .png .mp4 .zip .sql .pst .txt', type: 'system' },
+  { text: '[ENC] Starting encryption engine (AES-256-CTR + RSA-4096)...', type: 'warn' },
+  { text: '[ENC] Thread pool initialized: 16 worker threads', type: 'system' },
+  { text: '[ENC] [001/832] Encrypting: financial_report_Q4.xlsx... DONE', type: 'enc' },
+  { text: '[ENC] [002/832] Encrypting: tax_returns_2024.pdf... DONE', type: 'enc' },
+  { text: '[ENC] [003/832] Encrypting: passwords_backup.csv... DONE', type: 'enc' },
+  { text: '[ENC] [004/832] Encrypting: family_photos_2024.zip... DONE', type: 'enc' },
+  { text: '[ENC] [005/832] Encrypting: wedding_video.mp4... DONE', type: 'enc' },
+  { text: '...', type: 'enc' },
+  { text: '[ENC] [47830/832] Encrypting: browser_cookies.sqlite... DONE', type: 'enc' },
+  { text: '[ENC] [47831/832] Encrypting: crypto_wallet_keys.txt... DONE', type: 'enc' },
+  { text: '[ENC] [47832/47832] Encrypting: backup_drive_full.img... DONE', type: 'enc' },
+  { text: '[ENC] ████████████████████████████████████████ 100% COMPLETE', type: 'success' },
+  { text: '[ENC] Total files encrypted: 47,832 | Total size: 847.3 GB', type: 'success' },
+  { text: '[RANSOM] Generating ransom note: DECRYPT_INSTRUCTIONS.html', type: 'warn' },
+  { text: '[RANSOM] Ransom amount: 80.5 BTC', type: 'warn' },
+  { text: '[RANSOM] Payment deadline: 24 hours', type: 'warn' },
+  { text: '[WIPE] Scheduling secure key deletion in 24:00:00...', type: 'error' },
+  { text: '[SYS] Setting wallpaper to ransom_demand.bmp...', type: 'system' },
+  { text: '[SYS] Creating startup persistence: HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run', type: 'warn' },
+  { text: '[DONE] Encryption complete. Ransomware deployment successful.', type: 'success' },
+  { text: '[NOTE] *** THIS IS A CYBERSECURITY TRAINING SIMULATION ***', type: 'info' },
+  { text: '[NOTE] *** NO ACTUAL ENCRYPTION HAS OCCURRED ***', type: 'info' },
+];
+
+function populateTerminal() {
+  const terminal = document.getElementById('terminal');
+  let delay = 0;
+
+  terminalLogs.forEach((log, i) => {
+    delay += (log.text === '...') ? 500 : (200 + Math.random() * 300);
+    setTimeout(() => {
+      if (simulationEnded) return;
+      const entry = document.createElement('div');
+      entry.className = 'log-entry py-0.5';
+
+      let color = 'text-red-400';
+      if (log.type === 'success') color = 'text-green-400';
+      if (log.type === 'warn') color = 'text-yellow-400';
+      if (log.type === 'error') color = 'text-red-500 font-bold';
+      if (log.type === 'info') color = 'text-cyan-400';
+      if (log.type === 'enc') color = 'text-red-300';
+
+      const timestamp = new Date().toLocaleTimeString('en-US', { hour12: false });
+      entry.innerHTML = `<span class="text-gray-600">[${timestamp}]</span> <span class="${color}">${log.text}</span>`;
+      terminal.appendChild(entry);
+      terminal.scrollTop = terminal.scrollHeight;
+    }, delay);
+  });
+}
+
+// ===== MATRIX RAIN =====
+function initMatrixRain() {
+  const canvas = document.getElementById('matrixRain');
+  const ctx = canvas.getContext('2d');
+
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const chars = 'LZCRYPT0123456789ABCDEF!@#$%^&*()_+-=[]{}|;:,.<>?/~`';
+  const fontSize = 14;
+  const columns = Math.floor(canvas.width / fontSize);
+  const drops = Array(columns).fill(1);
+
+  function draw() {
+    ctx.fillStyle = 'rgba(10, 10, 10, 0.05)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = '#ff0000';
+    ctx.font = fontSize + 'px monospace';
+
+    for (let i = 0; i < drops.length; i++) {
+      const char = chars[Math.floor(Math.random() * chars.length)];
+      ctx.fillText(char, i * fontSize, drops[i] * fontSize);
+
+      if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+        drops[i] = 0;
+      }
+      drops[i]++;
+    }
+  }
+
+  setInterval(draw, 50);
+
+  window.addEventListener('resize', () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  });
+}
+
+// ===== ACTION HANDLERS =====
+function restoreDemoFiles() {
+  const overlay = document.getElementById('restoreOverlay');
+  const progressBar = document.getElementById('restoreProgress');
+  const status = document.getElementById('restoreStatus');
+  overlay.classList.remove('hidden');
+
+  const steps = [
+    { progress: 10, text: 'Connecting to decryption server...' },
+    { progress: 25, text: 'Verifying decryption key...' },
+    { progress: 40, text: 'Initializing AES-256 decryption engine...' },
+    { progress: 55, text: 'Decrypting documents (47,832 files)...' },
+    { progress: 70, text: 'Restoring file signatures...' },
+    { progress: 85, text: 'Verifying file integrity...' },
+    { progress: 95, text: 'Finalizing restoration...' },
+    { progress: 100, text: '✅ Decryption simulation complete! All demo files restored.' },
+  ];
+
+  let i = 0;
+  const interval = setInterval(() => {
+    if (i < steps.length) {
+      progressBar.style.width = steps[i].progress + '%';
+      status.textContent = steps[i].text;
+      i++;
+    } else {
+      clearInterval(interval);
+      setTimeout(() => {
+        overlay.classList.add('hidden');
+        document.getElementById('terminal').innerHTML += `
+          <div class="log-entry py-0.5">
+            <span class="text-green-400">[RESTORE] Demo file restoration simulation complete. No actual files were affected.</span>
+          </div>
+        `;
+      }, 2000);
+    }
+  }, 800);
+}
+
+function endSimulation() {
+  simulationEnded = true;
+  clearInterval(countdownInterval);
+
+  const duration = Math.floor((Date.now() - simulationStartTime) / 1000);
+  const h = Math.floor(duration / 3600);
+  const m = Math.floor((duration % 3600) / 60);
+  const s = duration % 60;
+  document.getElementById('simDuration').textContent =
+    String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+
+  document.getElementById('endOverlay').classList.remove('hidden');
+}
+
+// ===== SYSTEM INFO =====
+function populateSystemInfo() {
+  // Set infection time
+  const now = new Date();
+  document.getElementById('infectionTime').textContent =
+    now.toLocaleTimeString('en-US', { hour12: false });
+
+  // Simulate OS detection
+  const ua = navigator.userAgent;
+  let os = 'Unknown OS';
+  if (ua.includes('Windows')) os = 'Windows 11 Pro 23H2';
+  else if (ua.includes('Mac')) os = 'macOS Sonoma 14.x';
+  else if (ua.includes('Linux')) os = 'Linux x86_64';
+  document.getElementById('osInfo').textContent = os;
+
+  // Randomize hostname slightly
+  const hostChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let hostname = 'DESKTOP-';
+  for (let i = 0; i < 7; i++) hostname += hostChars[Math.floor(Math.random() * hostChars.length)];
+  document.getElementById('hostname').textContent = hostname;
+
+  // Mask IP
+  document.getElementById('extIp').textContent =
+    Math.floor(Math.random()*200+10) + '.' +
+    Math.floor(Math.random()*255) + '.' +
+    Math.floor(Math.random()*255) + '.' +
+    Math.floor(Math.random()*255);
+}
+
+// ===== INITIALIZE =====
+document.addEventListener('DOMContentLoaded', () => {
+  // Small delay to let page render before showing audio prompt
+  setTimeout(() => {
+    initAudio();
+  }, 1000);
+
+  startCountdown();
+  populateFiles();
+  populateTerminal();
+  initMatrixRain();
+  populateSystemInfo();
+
+  // Animate unique ID changing
+  setInterval(() => {
+    const chars = 'ABCDEF0123456789';
+    let id = 'LZ-';
+    for (let i = 0; i < 4; i++) id += chars[Math.floor(Math.random() * chars.length)];
+    id += '-';
+    for (let i = 0; i < 4; i++) id += chars[Math.floor(Math.random() * chars.length)];
+    id += '-';
+    for (let i = 0; i < 4; i++) id += chars[Math.floor(Math.random() * chars.length)];
+    // Only update if user hasn't interacted
+    document.getElementById('uniqueId').textContent = id;
+  }, 3000);
+});
+</script>
+
+</body>
+</html>
